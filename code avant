@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pricing cards</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div id="cards" class="pricing-grid"></div>
+    <script src="script.js"></script>
+    <script>
+      renderCards(document.getElementById("cards"), [
+        {
+          title: "Basic Plan",
+          price: "$9.99 /month",
+          features: ["1 GB Storage", "Basic Support", "All Core Features"],
+        },
+        {
+          title: "Pro Plan",
+          price: "$19.99 /month",
+          features: ["10 GB Storage", "Priority Support", "All Core Features"],
+        },
+        {
+          title: "Team Plan",
+          price: "$49.99 /month",
+          features: ["100 GB Storage", "Dedicated Support", "Team Workspace"],
+        },
+      ]);
+    </script>
+  </body>
+</html>

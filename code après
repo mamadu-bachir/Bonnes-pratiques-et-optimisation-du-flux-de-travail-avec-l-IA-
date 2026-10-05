@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartes de prix</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;800&display=swap">
+<style>
+:root {
+  --bg: #f4f6fa;
+  --surface: #ffffff;
+  --ink: #0f1b3d;
+  --muted: #5b6585;
+  --line: #e3e7f0;
+  --accent: #2f5bff;
+  --accent-dark: #1f3fcc;
+  --ok: #12805c;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px 16px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 300px));
+  gap: 20px;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1000px;
+}
+
+/* ---- Carte ---- */
+.pricing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(15, 27, 61, .08);
+  text-align: left;
+}
+.pricing.is-featured {
+  background: var(--ink);
+  color: #fff;
+  border-color: var(--ink);
+  box-shadow: 0 16px 40px rgba(15, 27, 61, .28);
+}
+.badge {
+  position: absolute;
+  top: -12px;
+  right: 20px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+.title { margin: 0; font-size: 22px; font-weight: 800; }
+.desc  { margin: 6px 0 0; font-size: 15px; line-height: 1.5; color: var(--muted); }
+.is-featured .desc { color: #b9c2e0; }
+
+.price { margin: 20px 0 0; display: flex; align-items: baseline; gap: 4px; }
+.amount { font-size: 44px; font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+.period { font-size: 15px; color: var(--muted); }
+.is-featured .period { color: #b9c2e0; }
+
+.features { list-style: none; margin: 24px 0; padding: 0; flex: 1; }
+.features li {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 15px;
+}
+.features li:last-child { border-bottom: 0; }
+.is-featured .features li { border-color: rgba(255, 255, 255, .14); }
+.features li::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.5l2.5 2.5L13 6.5' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 100% no-repeat;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px 20px;
+  border: 0;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+}
+.btn:hover { background: var(--accent-dark); }
+.btn:active { transform: scale(.98); }
+.btn:focus-visible { outline: 3px solid #9db3ff; outline-offset: 3px; }
+.btn[aria-pressed="true"] { background: var(--ok); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}
+</style>
+</head>
+<body>
+
+<main class="plans" id="plans"></main>
+
+<script>
+/**
+ * Composant réutilisable : Card(title, price, features, options)
+ * options : { period, description, cta, badge, featured, onSelect }
+ * Retourne un élément DOM (aucun innerHTML : contenu sûr).
+ */
+function Card(title, price, features = [], options = {}) {
+  const {
+    period = "/mois",
+    description = "",
+    cta = "Commencer l'essai",
+    badge = "",
+    featured = false,
+    onSelect = null,
+  } = options;
+
+  const el = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+
+  const card = el("article", "pricing" + (featured ? " is-featured" : ""));
+  if (badge) card.append(el("span", "badge", badge));
+
+  card.append(el("h2", "title", title));
+  if (description) card.append(el("p", "desc", description));
+
+  const priceBox = el("p", "price");
+  priceBox.append(el("span", "amount", price), el("span", "period", period));
+  card.append(priceBox);
+
+  const list = el("ul", "features");
+  features.forEach((f) => list.append(el("li", "", f)));
+  card.append(list);
+
+  const btn = el("button", "btn", cta);
+  btn.type = "button";
+  btn.setAttribute("aria-pressed", "false");
+  btn.addEventListener("click", () => {
+    const active = btn.getAttribute("aria-pressed") === "true";
+    btn.setAttribute("aria-pressed", String(!active));
+    btn.textContent = active ? cta : "Essai activé";
+    if (onSelect) onSelect({ title, price, selected: !active });
+  });
+  card.append(btn);
+
+  return card;
+}
+
+/* ---- Exemple d'utilisation ---- */
+const plans = document.getElementById("plans");
+
+plans.append(
+  Card("Basic", "9,99 $", ["1 Go de stockage", "Support de ba

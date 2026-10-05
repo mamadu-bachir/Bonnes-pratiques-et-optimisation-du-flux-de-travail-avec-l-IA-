@@ -1,1 +1,5 @@
+Ce code ci-drssous est un composant web defectueux : une carte de prix avec des problemes de mise en page et des boutons qui ne repondent pas 
 
+LE CODE DEFECTUEUX
+
+je veux que tu identifi et corrige les bougues de mise en page, ensuite ajoute les elements necessaires pour que je puisse avoir une carte de prix premieum. Transformez-le en composant reutilisable(par exemple, Card(title,price,features)).
